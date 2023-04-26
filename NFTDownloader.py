@@ -16,8 +16,10 @@
 import json
 import os
 import requests
+import shutil
 import time
 
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 def create_dirs( name=None ) :
     assert name is not None, "'name' cannot be 'None'"
@@ -45,9 +47,9 @@ def get_images( name=None, contract_address=None, total_count=None ) :
     for i in range( total_count ) :
         print( "--> Images: %05u" % i, end="\r" )
         url = f"https://img.x2y2.io/v2/1/{contract_address}/{i}/280/image.jpg"
-        image_data = requests.get( url ).content
+        response = requests.get( url, stream=True, headers=headers )
         with open( os.path.join( name, "images", "%05u.jpg" % i ), 'wb' ) as f :
-            f.write( image_data )
+            shutil.copyfileobj( response.raw, f )
         time.sleep( 1 )
 
 
@@ -76,6 +78,7 @@ if __name__ == "__main__" :
     ( options, args ) = parser.parse_args()
 
     config = None
+#    with open( "data/config.json", 'r' ) as f :
     with open( options.config, 'r' ) as f :
         config = json.load( f )
 
