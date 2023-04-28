@@ -51,6 +51,7 @@ def get_images( name=None, contract_address=None, total_count=None ) :
         with open( os.path.join( name, "images", "%05u.jpg" % i ), 'wb' ) as f :
             shutil.copyfileobj( response.raw, f )
         time.sleep( 1 )
+    print( f"--> Image downloading complete for '{name}'" )
 
 
 def get_metadata( name=None, contract_address=None, alchemy_key=None, total_count=None ) :
@@ -69,6 +70,7 @@ def get_metadata( name=None, contract_address=None, alchemy_key=None, total_coun
         with open( os.path.join( name, "metadata", f"{index}.json" ), 'w' ) as f :
             json.dump( json_data, f, indent=2 )
         index += 100
+    print( f"--> Metadata downloading complete for '{name}'" )
 
 
 if __name__ == "__main__" :
@@ -78,14 +80,13 @@ if __name__ == "__main__" :
     ( options, args ) = parser.parse_args()
 
     config = None
-#    with open( "data/config.json", 'r' ) as f :
     with open( options.config, 'r' ) as f :
         config = json.load( f )
 
     alchemy_key = config[ "alchemy_key" ]
     nfts = config[ "nfts" ]
     for nft in nfts :
-        print( "--> %s\n" % nft[ "name" ] )
+        print( "--> %s" % nft[ "name" ] )
         create_dirs( nft[ "name" ] )
         args = { "name" : nft[ "name" ], "contract_address" : nft[ "contract_address" ], "total_count" : nft[ "total_count" ] }
         get_images( **args )
