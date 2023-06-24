@@ -45,12 +45,13 @@ def get_images( name=None, contract_address=None, total_count=None ) :
     assert contract_address is not None, "'contract_address' cannot be 'None'"
     assert total_count is not None, "'total_count' cannot be 'None'"
     for i in range( total_count ) :
-        if os.path.exists( open( os.path.join( name, "images", "%05u.jpg" % i ), 'wb' ) ) :
+        filepath = os.path.join( name, "images", f"%05u.jpg" % i )
+        if os.path.exists( filepath ) :
             continue
         print( "--> Images: %05u" % i, end="\r" )
         url = f"https://img.x2y2.io/v2/1/{contract_address}/{i}/280/image.jpg"
         response = requests.get( url, stream=True, headers=headers )
-        with open( os.path.join( name, "images", "%05u.jpg" % i ), 'wb' ) as f :
+        with open( filepath, 'wb' ) as f :
             shutil.copyfileobj( response.raw, f )
         time.sleep( 1 )
     print( f"--> Image downloading complete for '{name}'" )
